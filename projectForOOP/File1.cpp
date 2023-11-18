@@ -1,16 +1,30 @@
 #include<iostream>
 using namespace std;
 class Ticket {
-	int uniqueId;
-	double priceOfTicket;
+private:
+	const int uniqueId;
 	int row;
 	int seat;
 	char* zone;
-	
+public:
+	static int ticketsSold;
+	Ticket() :uniqueId(0) {//default constr
+		this->row = 0;
+		this->seat = 0;
+		this->zone = "VIP";
+	}
+	//constr with parameters
+	Ticket(int row, int seat, char* zone) :uniqueId(++ticketsSold) {
+		this->row = row;
+		this->seat = seat;
+		this->zone = new char[strlen(zone) + 1];
+		strcpy(this->zone, zone);
+	}
 
 
 };
-class event {
+class Event {
+private:
 	const char* nameOfEvent;
 	int numberOfSeats;
 	
