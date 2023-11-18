@@ -27,6 +27,8 @@ class Event {
 private:
 	const char* nameOfEvent;
 	int numberOfSeats;
+[public:
+	static int 
 	
 };
 int main()
