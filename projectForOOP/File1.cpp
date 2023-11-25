@@ -109,31 +109,74 @@ public:
 		else
 			throw exception("Wrong value. ");
 	}
-	
-	
-	
-
 	//constructors, copy constr, destructor, overloaded operator=
+	Ticket() :uniqueId(++soldTickets) {
 
-
-
-
-	/*Ticket() :uniqueId(0) {
-		this->row = 0;
-		this->seat = 0;
-		this->price = 0;
-		this->zone = NULL;
-	}*/
-	//constr with parameters
-	/*Ticket(int row, int seat, int price, char* zone) :uniqueId(++ticketsSold) {
+	}
+	Ticket(int row, int NumberOfSeats, double price, bool isValid, const char* zone,int age1,int age2,int age3, int age4,int age5, int age6) :uniqueId(++soldTickets)
+	{
 		this->row = row;
-		this->seat = seat;
+		this->NumberOfSeats = NumberOfSeats;
 		this->price = price;
+		this->isValid = isValid;
 		this->zone = new char[strlen(zone) + 1];
 		strcpy(this->zone, zone);
-	}*/
+		this->ageOfPeople[0] = age1;
+		this->ageOfPeople[1] = age2;
+		this->ageOfPeople[2] = age3;
+		this->ageOfPeople[3] = age4;
+		this->ageOfPeople[4] = age5;
+		this->ageOfPeople[5] = age6;
 
 
+	}
+	Ticket(int row, int NumberOfSeats):uniqueId(++soldTickets)
+	{
+		this->row = row;
+		this->NumberOfSeats = NumberOfSeats;
+	}
+	Ticket(double price, bool isValid) :uniqueId(++soldTickets) {
+		this->price = price;
+		this->isValid = isValid;
+	}
+	
+	~Ticket() {
+		cout << endl << "Deconstructor for Ticket class. ";
+		delete[] this->zone;
+
+	}
+	Ticket(const Ticket& t) :uniqueId(++soldTickets) {
+
+		this->row = t.row;
+		this->NumberOfSeats = t.NumberOfSeats;
+		if (t.zone != NULL) {
+			this->zone = new char[strlen(t.zone) + 1];
+			strcpy(this->zone, t.zone);
+		}
+		this->price = t.price;
+		this->isValid = t.isValid;
+		for (int i = 0; i < 6; i++)
+			this->ageOfPeople[i] = t.ageOfPeople[i];
+
+	}
+	Ticket& operator=(const Ticket& s)
+	{
+		this->row = s.row;
+		if (s.zone != NULL) {
+			if (this->zone != NULL)
+			{
+				delete[] this->zone;
+				this->zone = nullptr;
+			}
+			this->zone = new char[strlen(s.zone) + 1];
+			strcpy(this->zone, s.zone);
+		}
+		this->isValid = s.isValid;
+		for (int i = 0; i < 6; i++)
+			this->ageOfPeople[i] = s.ageOfPeople[i];
+		return *this;
+
+	}
 };
 //other methods for ticket.
 void printLocationOfTicket(Ticket ticket)
@@ -227,6 +270,62 @@ public:
 		strcpy_s(this->nameOfLocation, value.size() + 1, value.c_str());
 		
 	}
+	//constr, copy constr, operator=, deconstr
+	Location(){
+
+	}
+	Location(int nr, int r[5], bool av, const char* name)
+	{
+		this->numberOfSeats = nr;
+		this->isAvailable = av;
+		this->nameOfLocation = new char[strlen(name) + 1];
+		strcpy(this->nameOfLocation, name);
+		for (int i = 0; i < 5; i++)
+			this->reviews[i] = r[i];
+
+
+	}
+	Location(int nr, bool avlb)
+	{
+		this->numberOfSeats = nr;
+		this->isAvailable = avlb;
+	}
+
+	~Location() {
+		cout << endl << "Deconstructor for Location class. ";
+		delete[] this->nameOfLocation;
+
+	}
+	Location(const Location& l){
+
+		this->numberOfSeats = l.numberOfSeats;
+		this->isAvailable = l.isAvailable;
+		if (l.nameOfLocation != NULL) {
+			this->nameOfLocation = new char[strlen(l.nameOfLocation) + 1];
+			strcpy(this->nameOfLocation, l.nameOfLocation);
+		}
+		for (int i = 0; i < 5; i++)
+			this->reviews[i] = l.reviews[i];
+
+	}
+	Location& operator=(const Location& s)
+	{
+		this->numberOfSeats = s.numberOfSeats;
+		if (s.nameOfLocation != NULL) {
+			if (this->nameOfLocation != NULL)
+			{
+				delete[] this->nameOfLocation;
+				this->nameOfLocation = nullptr;
+			}
+			this->nameOfLocation = new char[strlen(s.nameOfLocation) + 1];
+			strcpy(this->nameOfLocation, s.nameOfLocation);
+		}
+		this->isAvailable = s.isAvailable;
+		for (int i = 0; i < 5; i++)
+			this->reviews[i] = s.reviews[i];
+		return *this;
+	}
+
 };
 //other methods for Location
 void totalNumberOfSeats(Location location)
@@ -352,7 +451,62 @@ public:
 		else
 			throw exception("One of the values is wrong. ");
 	}
-	//default constr
+	//constr, copy constr, operator=, deconstr
+	Event() {
+
+	}
+	Event(int Id, int attendance[7], bool cancel, const char* name)
+	{
+		this->eventId = Id;
+		this->isCanceled = cancel;
+		this->nameOfEvent = new char[strlen(name) + 1];
+		strcpy(this->nameOfEvent, name);
+		for (int i = 0; i < 7; i++)
+			this->maximumAttendancePerDay[i] = attendance[i];
+
+
+	}
+	Event(int nr, bool is)
+	{
+		this->eventId = nr;
+		this->isCanceled = is;
+	}
+
+	~Event() {
+		cout << endl << "Deconstructor for Event class. ";
+		delete[] this->nameOfEvent;
+
+	}
+	Event(const Event& e) {
+
+		this->eventId = e.eventId;
+		this->isCanceled = e.isCanceled;
+		if (e.nameOfEvent!= NULL) {
+			this->nameOfEvent = new char[strlen(e.nameOfEvent) + 1];
+			strcpy(this->nameOfEvent, e.nameOfEvent);
+		}
+		for (int i = 0; i < 7; i++)
+			this->maximumAttendancePerDay[i] = e.maximumAttendancePerDay[i];
+
+	}
+	Event& operator=(const Event& s)
+	{
+		this->eventId = s.eventId;
+		if (s.nameOfEvent != NULL) {
+			if (this->nameOfEvent!= NULL)
+			{
+				delete[] this->nameOfEvent;
+				this->nameOfEvent = nullptr;
+			}
+			this->nameOfEvent= new char[strlen(s.nameOfEvent) + 1];
+			strcpy(this->nameOfEvent, s.nameOfEvent);
+		}
+		this->isCanceled= s.isCanceled;
+		for (int i = 0; i < 7; i++)
+			this->maximumAttendancePerDay[i] = s.maximumAttendancePerDay[i];
+		return *this;
+
+	}
 };
 //other methods for event
 void TotalAttendance(Event event)
@@ -371,8 +525,14 @@ void isMyEventAvailable(Event event)
 int Ticket::soldTickets = 0;
 int main()
 {
-	Ticket bilet1;
-	bilet1.setRow(10);
+	/*Ticket bilet1(10, 5, 29.8, true, "peluza", 15, 16, 17, 18, 19, 20);
+	Ticket copy = bilet1;
+	cout<<	copy.getAgeOfPerson2();
+	Ticket bilet2;
+	cout << endl;
+	bilet2 = bilet1;
+	cout<<bilet2.getAgeOfPerson2();*/
+	/*bilet1.setRow(10);
 	bilet1.setNumberOfSeats(4);
 	bilet1.setPrice(20);
 	bilet1.setAgeOfPerson(0, 15);
@@ -380,7 +540,7 @@ int main()
 	bilet1.setAgeOfPerson(2, 30);
 	TotalCost(bilet1);
 	printLocationOfTicket(bilet1);
-	cout << endl;  
+	cout << endl;
 
 
 
@@ -404,10 +564,12 @@ int main()
 	event.setMaxAttendanceEveryDay(3, 10000);
 	event.setMaxAttendanceEveryDay(4, 10000);
 	event.setMaxAttendanceEveryDay(5, 10000);
-	event.setMaxAttendanceEveryDay(6, 10000); 
+	event.setMaxAttendanceEveryDay(6, 10000);
 	TotalAttendance(event);
 	cout << endl;
 	event.setNameOfEvent("Jazz Concert");
 	event.activateEvent();
-	isMyEventAvailable(event);
+	isMyEventAvailable(event);*/
+	
+
 }
