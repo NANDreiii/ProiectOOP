@@ -1,15 +1,16 @@
 #include<iostream>
 using namespace std;
+enum class zonesOfEvent { VIP, zone1, zone2 };
 class Ticket {
 private:
 	const int uniqueId;
 	int row;
 	int seat;
-	int price;//added
+	int price;
 	char* zone;
 public:
-	static int ticketsSold;
-	Ticket() :uniqueId(0) {//default constr
+	static int soldTickets; 
+	Ticket() :uniqueId(0) {
 		this->row = 0;
 		this->seat = 0;
 		this->price = 0;
@@ -27,14 +28,14 @@ public:
 
 };
 class Location {
-	int maxNumberSeats;
+	int NumberSeats;
 	int numberOfRows;
 	int zones;
 
 };
 class Event {
 private:
-	const int eventId;//added
+	const int eventId;
 	char* nameOfEvent;
 	int numberOfSeats;
 [public:
@@ -47,6 +48,7 @@ private:
 
 	
 };
+int Ticket::soldTickets = 0;
 int main()
 {
 	cout << "De testare";
