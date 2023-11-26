@@ -1,7 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 using namespace std;
-enum class zonesOfEvent { VIP, zone1, zone2};
 class Ticket {
 private:
 	const int uniqueId = 0;
