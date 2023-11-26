@@ -176,7 +176,64 @@ public:
 		return *this;
 
 	}
+	//operatori
+	void operator++()
+	{
+		this->row++;
+	}
+	int operator[](int i)
+	{
+		if (i > 0 && i <= 5)
+			return this->ageOfPeople[i];
+		else
+			cout << "Wrong index. ";
+	}
+	Ticket operator!() {
+		Ticket copie = *this;
+		copie.isValid = !copie.isValid;
+		return copie;
+	}
+	//cast
+	operator int() {
+		return this->price / 5.0;//convert price from lei to euro.
+	}
+	friend ostream& operator<<(ostream& console,const Ticket& ticket);
+	//opeartor >>(cin)
+	friend istream& operator>>(istream& console, Ticket& ticket);
+	
+
 };
+//operator <<
+ostream& operator<<(ostream& out, const Ticket& ticket)
+{
+	out << ticket.uniqueId << endl << ticket.row << endl << ticket.NumberOfSeats << endl << ticket.price << endl << ticket.isValid << endl << ticket.zone << endl;
+	for (int i = 0; i < 6; i++)
+		out << ticket.ageOfPeople[i];
+
+return out;
+}
+//operator >>
+istream& operator>>(istream& in, Ticket& ticket) {
+	char zone[200];
+	cout << "Enter number of seats, row, validity, price, zone: ";
+	in >> ticket.NumberOfSeats >> ticket.row >> ticket.isValid >> ticket.price >> zone;
+	if (zone != NULL)
+	{
+		if (ticket.zone != NULL)
+			delete[] ticket.zone;
+		ticket.zone = new char[strlen(zone) + 1];
+		strcpy(ticket.zone, zone);
+	}
+	cout << "How many people? ";
+	int numberOfPeople;
+	in >> numberOfPeople;
+
+	cout << "Enter ages of people: ";
+	for (int j = 0; j < numberOfPeople; j++)
+		in >> ticket.ageOfPeople[j];
+
+	return in;
+}
 //other methods for ticket.
 void printLocationOfTicket(Ticket ticket)
 {
@@ -324,8 +381,54 @@ public:
 			this->reviews[i] = s.reviews[i];
 		return *this;
 	}
+	//operatori
+	void operator++()
+	{
+		this->numberOfSeats++;
+	}
+	int operator[](int i)
+	{
+		if (i > 0 && i <= 4)
+			return this->reviews[i];
+		else
+			cout << "Wrong index. ";
+	}
+	Location operator!() {
+		Location copie = *this;
+		copie.isAvailable = !copie.isAvailable;
+		return copie;
+	}
+	friend ostream& operator<<(ostream& console, const Location& l);
+	//opeartor >>(cin)
+	friend istream& operator>>(istream& console, Location& l);
 
-};
+};	
+//operator <<
+ostream& operator<<(ostream& out, const Location& l)
+{
+	out << l.numberOfSeats << endl << l.nameOfLocation << endl << l.isAvailable;
+	for (int i = 0; i < 5; i++)
+		out << l.reviews[i];
+
+	return out;
+}
+//operator >>
+istream& operator>>(istream& in, Location& l) {
+	char name[200];
+	cout << "Enter number of seats, reviews, availability, and name: ";
+	in >> l.numberOfSeats;
+	for (int i = 0; i < 5; i++)
+		in >> l.reviews[i];
+	in >> l.isAvailable >> name;
+	if (name != NULL)
+	{
+		if (l.nameOfLocation != NULL)
+			delete[] l.nameOfLocation;
+		l.nameOfLocation = new char[strlen(name) + 1];
+		strcpy(l.nameOfLocation, name);
+	}
+	return in;
+}
 //other methods for Location
 void totalNumberOfSeats(Location location)
 {
@@ -506,7 +609,52 @@ public:
 		return *this;
 
 	}
+	//operatori
+	void operator++()
+	{
+		this->eventId++;
+	}
+	int operator[](int i)
+	{
+		if (i > 0 && i <= 4)
+			return this->maximumAttendancePerDay[i];
+		else
+			cout << "Wrong index. ";
+	}
+	Event operator!() {
+		Event copie = *this;
+		copie.isCanceled = !copie.isCanceled;
+		return copie;
+	}
+	friend ostream& operator<<(ostream& console, const Event& e);
+	//opeartor >>(cin)
+	friend istream& operator>>(istream& console, Event& e);
+
 };
+//operator <<
+ostream& operator<<(ostream& out, const Event& e)
+{
+	out << e.eventId << endl << e.nameOfEvent << endl << e.isCanceled;
+	for (int i = 0; i < 7; i++)
+		out << e.maximumAttendancePerDay[i];
+	return out;
+}
+//operator >>
+istream& operator>>(istream& in, Event& e) {
+	char name[200];
+	cout << "Enter eventId, name, availability and max attendance per day: ";
+	in >> e.eventId >> name >> e.isCanceled;
+	for (int i = 0; i < 7; i++)
+		in >> e.maximumAttendancePerDay[i];
+	if (name != NULL)
+	{
+		if (e.nameOfEvent != NULL)
+			delete[] e.nameOfEvent;
+		e.nameOfEvent = new char[strlen(name) + 1];
+		strcpy(e.nameOfEvent, name);
+	}
+	return in;
+}
 //other methods for event
 void TotalAttendance(Event event)
 {
@@ -524,8 +672,11 @@ void isMyEventAvailable(Event event)
 int Ticket::soldTickets = 0;
 int main()
 {
-	/*Ticket bilet1(10, 5, 29.8, true, "peluza", 15, 16, 17, 18, 19, 20);
-	Ticket copy = bilet1;
+	//Ticket bilet1(10, 5, 29.8, true, "peluza", 15, 16, 17, 18, 19, 20);
+	Ticket ticket;
+	cin >> ticket;
+	cout << ticket;
+	/*Ticket copy = bilet1;
 	cout<<	copy.getAgeOfPerson2();
 	Ticket bilet2;
 	cout << endl;
