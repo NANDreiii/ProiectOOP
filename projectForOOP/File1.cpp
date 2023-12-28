@@ -673,9 +673,9 @@ int Ticket::soldTickets = 0;
 int main()
 {
 	//Ticket bilet1(10, 5, 29.8, true, "peluza", 15, 16, 17, 18, 19, 20);
-	Ticket ticket;
+	/*Ticket ticket;
 	cin >> ticket;
-	cout << ticket;
+	cout << ticket;*/
 	/*Ticket copy = bilet1;
 	cout<<	copy.getAgeOfPerson2();
 	Ticket bilet2;
@@ -721,5 +721,9 @@ int main()
 	event.activateEvent();
 	isMyEventAvailable(event);*/
 	
-
+	int a;
+	a = rand();
+	cout << a;
+	int b = rand();
+	cout << endl << b;
 }
