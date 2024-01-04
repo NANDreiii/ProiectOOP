@@ -29,7 +29,7 @@ public:
 	{
 		return this->seat;
 	}
-	float getPrice()
+	double getPrice()
 	{
 		return this->price;
 	}
@@ -111,7 +111,7 @@ public:
 	Ticket() :uniqueId(++soldTickets) {
 
 	}
-	Ticket(int row, int seat, float price, bool isValid, const char* name,ZoneType zone) :uniqueId(++soldTickets)
+	Ticket(int row, int seat, double price, bool isValid, const char* name,ZoneType zone) :uniqueId(++soldTickets)
 	{
 		this->row = row;
 		this->seat = seat;
@@ -130,7 +130,7 @@ public:
 	}
 
 
-	Ticket(float price, bool isValid) :uniqueId(++soldTickets) {
+	Ticket(double price, bool isValid) :uniqueId(++soldTickets) {
 		this->price = price;
 		this->isValid = isValid;
 	}
@@ -208,7 +208,7 @@ public:
 	//cast
 
 
-	operator float() {
+	operator double() {
 		return this->price / 5.0;//convert price from lei to euro.
 	}
 
