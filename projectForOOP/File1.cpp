@@ -1,20 +1,21 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 using namespace std;
+enum class ZoneType{No_Access = 0,General_access = 1, Special_access = 2, VIP = 3 };
 class Ticket {
 private:
 	const int uniqueId = 0;
 	int row = 0;
-	int NumberOfSeats = 0;
-	double price = 100;
-	bool isValid = true;
-	char* zone = nullptr;
-	int ageOfPeople[6] = { 0,0,0,0,0,0 };
+	int seat = 0;
+	float price = 0;
+	bool isValid = false;
+	char* name_of_holder = nullptr;
+	ZoneType zone = ZoneType::No_Access;
 public:
 	static int soldTickets; 
-	static const int MAX_PRICE = 9999;
-	static const int MAX_ROW = 150;
-	static const int MAX_SEAT = 6;
+	static const int MAX_PRICE = 10000;
+	static const int MAX_ROW = 100;
+	static const int MAX_SEAT = 100;
 	//getters
 	int getUniqueId()
 	{
@@ -24,11 +25,11 @@ public:
 	{
 		return this->row;
 	}
-	int getSeats()
+	int getSeat()
 	{
-		return this->NumberOfSeats;
+		return this->seat;
 	}
-	double getPrice()
+	float getPrice()
 	{
 		return this->price;
 	}
@@ -36,33 +37,13 @@ public:
 	{
 		return this->isValid;
 	}
-	string getZone()
+	string getName()
 	{
-		return string(this->zone);
+		return string(this->name_of_holder);
 	}
-	int getAgeOfPerson1()
+	ZoneType Getzone()
 	{
-		return this->ageOfPeople[0];
-	}
-	int getAgeOfPerson2()
-	{
-		return this->ageOfPeople[1];
-	}
-	int getAgeOfPerson3()
-	{
-		return this->ageOfPeople[2];
-	}
-	int getAgeOfPerson4()
-	{
-		return this->ageOfPeople[3];
-	}
-	int getAgeOfPerson5()
-	{
-		return this->ageOfPeople[4];
-	}
-	int getAgeOfPerson6()
-	{
-		return this->ageOfPeople[5];
+		return this->zone;
 	}
 	//setters
 	void setRow(int value)
@@ -72,15 +53,15 @@ public:
 		else
 			throw exception("Wrong value. Row does not exist. ");
 	}
-	void setNumberOfSeats(int value)
+	void setSeat(int value)
 	{
 		if (value >= 1 && value <= MAX_SEAT)
-			this->NumberOfSeats = value;
+			this->seat = value;
 		else
-			throw exception("Wrong value. Number of seats on the ticket is not right. ");
+			throw exception("Wrong value. Number of seat on the ticket is not right. ");
 
 	}
-	void setPrice(int value)
+	void setPrice(float value)
 	{
 		if (value >= 0 && value <= MAX_PRICE)
 			this->price = value;
@@ -95,166 +76,182 @@ public:
 	{
 		this->isValid = false;
 	}
-	void setZone(string variable)
+	void setNameOfPerson(char* value)
 	{
-		delete[] this->zone;
-		this->zone = new char[variable.size() + 1];
-		strcpy_s(this->zone, variable.size() + 1, variable.c_str());
+		delete[] this->name_of_holder;
+		this->name_of_holder = new char[strlen(value) + 1];
+		strcpy_s(this->name_of_holder, strlen(value) + 1, value);
 	}
-	void setAgeOfPerson(int index, int value)
+	void setZone(ZoneType variable)
 	{
-		if (index >= 0 && index <= 5 && value >= 14 && value <= 100)
-			this->ageOfPeople[index] = value;
+		if (variable == ZoneType::General_access || variable == ZoneType::Special_access || variable == ZoneType::VIP)
+			this->zone = variable;
 		else
-			throw exception("Wrong value. ");
+			throw exception("The zone is not valid. ");
 	}
+
 	//constructors, copy constr, destructor, overloaded operator=
 	Ticket() :uniqueId(++soldTickets) {
 
 	}
-	Ticket(int row, int NumberOfSeats, double price, bool isValid, const char* zone,int age1,int age2,int age3, int age4,int age5, int age6) :uniqueId(++soldTickets)
+	Ticket(int row, int seat, float price, bool isValid, const char* name,ZoneType zone) :uniqueId(++soldTickets)
 	{
 		this->row = row;
-		this->NumberOfSeats = NumberOfSeats;
+		this->seat = seat;
 		this->price = price;
 		this->isValid = isValid;
-		this->zone = new char[strlen(zone) + 1];
-		strcpy(this->zone, zone);
-		this->ageOfPeople[0] = age1;
-		this->ageOfPeople[1] = age2;
-		this->ageOfPeople[2] = age3;
-		this->ageOfPeople[3] = age4;
-		this->ageOfPeople[4] = age5;
-		this->ageOfPeople[5] = age6;
-
-
+		this->name_of_holder = new char[strlen(name) + 1];
+		strcpy(this->name_of_holder, name);
+		this->zone = zone;
 	}
-	Ticket(int row, int NumberOfSeats):uniqueId(++soldTickets)
+
+
+	Ticket(int row, int seat):uniqueId(++soldTickets)
 	{
 		this->row = row;
-		this->NumberOfSeats = NumberOfSeats;
+		this->seat = seat;
 	}
-	Ticket(double price, bool isValid) :uniqueId(++soldTickets) {
+
+
+	Ticket(float price, bool isValid) :uniqueId(++soldTickets) {
 		this->price = price;
 		this->isValid = isValid;
 	}
-	
+
+
 	~Ticket() {
 		cout << endl << "Deconstructor for Ticket class. ";
-		delete[] this->zone;
+		delete[] this->name_of_holder;
 
 	}
+
+
 	Ticket(const Ticket& t) :uniqueId(++soldTickets) {
 
 		this->row = t.row;
-		this->NumberOfSeats = t.NumberOfSeats;
-		if (t.zone != NULL) {
-			this->zone = new char[strlen(t.zone) + 1];
-			strcpy(this->zone, t.zone);
+		this->seat = t.seat;
+		if (t.name_of_holder != NULL) {
+			this->name_of_holder = new char[strlen(t.name_of_holder) + 1];
+			strcpy(this->name_of_holder, t.name_of_holder);
 		}
 		this->price = t.price;
 		this->isValid = t.isValid;
-		for (int i = 0; i < 6; i++)
-			this->ageOfPeople[i] = t.ageOfPeople[i];
+		this->zone = t.zone;
 
 	}
+
+
 	Ticket& operator=(const Ticket& s)
 	{
 		this->row = s.row;
-		if (s.zone != NULL) {
-			if (this->zone != NULL)
+		if (s.name_of_holder != NULL) {
+			if (this->name_of_holder != NULL)
 			{
-				delete[] this->zone;
-				this->zone = nullptr;
+				delete[] this->name_of_holder;
+				this->name_of_holder = nullptr;
 			}
-			this->zone = new char[strlen(s.zone) + 1];
-			strcpy(this->zone, s.zone);
+			this->name_of_holder = new char[strlen(s.name_of_holder) + 1];
+			strcpy(this->name_of_holder, s.name_of_holder);
 		}
 		this->isValid = s.isValid;
-		for (int i = 0; i < 6; i++)
-			this->ageOfPeople[i] = s.ageOfPeople[i];
+		this->zone = s.zone;
 		return *this;
 
 	}
+
+
 	//operatori
+
+
 	void operator++()
 	{
-		this->row++;
+		this->price++;
 	}
+
+
 	int operator[](int i)
 	{
-		if (i > 0 && i <= 5)
-			return this->ageOfPeople[i];
+		if (i > 0 && i <= strlen(this->name_of_holder))
+			return this->name_of_holder[i];
 		else
 			cout << "Wrong index. ";
 	}
+
+
 	Ticket operator!() {
 		Ticket copie = *this;
 		copie.isValid = !copie.isValid;
 		return copie;
 	}
+
+	
+
 	//cast
+
+
 	operator int() {
 		return this->price / 5.0;//convert price from lei to euro.
 	}
-	friend ostream& operator<<(ostream& console,const Ticket& ticket);
-	//opeartor >>(cin)
-	friend istream& operator>>(istream& console, Ticket& ticket);
-	
 
+
+	friend ostream& operator<<(ostream& console,const Ticket& ticket);
+
+
+	//opeartor >>(cin)
+
+
+	friend istream& operator>>(istream& console, Ticket& ticket);
 };
+string zoneToString(ZoneType zone) {
+	switch (zone) {
+	case ZoneType::No_Access:
+		return "No_Access";
+	case ZoneType::General_access:
+			return "General_Access";
+	case ZoneType::Special_access:
+			return "Special_Access";
+		case ZoneType::VIP:
+			return "VIP";
+		default:
+			return "Cannot enter";
+	}
+}
 //operator <<
 ostream& operator<<(ostream& out, const Ticket& ticket)
 {
-	out << ticket.uniqueId << endl << ticket.row << endl << ticket.NumberOfSeats << endl << ticket.price << endl << ticket.isValid << endl << ticket.zone << endl;
-	for (int i = 0; i < 6; i++)
-		out << ticket.ageOfPeople[i];
-
-return out;
+	out << ticket.uniqueId << endl << ticket.row << endl << ticket.seat << endl << ticket.price << endl << ticket.isValid << endl << zoneToString(ticket.zone) << endl;
+	return out;
 }
+
+
 //operator >>
 istream& operator>>(istream& in, Ticket& ticket) {
-	char zone[200];
-	cout << "Enter number of seats, row, validity, price, zone: ";
-	in >> ticket.NumberOfSeats >> ticket.row >> ticket.isValid >> ticket.price >> zone;
-	if (zone != NULL)
-	{
-		if (ticket.zone != NULL)
-			delete[] ticket.zone;
-		ticket.zone = new char[strlen(zone) + 1];
-		strcpy(ticket.zone, zone);
-	}
-	cout << "How many people? ";
-	int numberOfPeople;
-	in >> numberOfPeople;
+	cout << "Enter the row, the seat, the price, the validity, the zone(General_Access = 1, Special_access = 2, or VIP = 3), and your name: ";
 
-	cout << "Enter ages of people: ";
-	for (int j = 0; j < numberOfPeople; j++)
-		in >> ticket.ageOfPeople[j];
+	int zoneValue;
+	in >> ticket.row >> ticket.seat >> ticket.price >> ticket.isValid >> zoneValue;
+	ticket.zone = static_cast<ZoneType>(zoneValue);
+
+	in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // Clear newline character from the buffer
+
+	char name[100];
+	in.getline(name, sizeof(name));
+	ticket.setNameOfPerson(name);
 
 	return in;
 }
+
+
 //other methods for ticket.
-void printLocationOfTicket(Ticket ticket)
+void printLocationOfTicket(Ticket& ticket)
 {
-	cout << endl << "Your will stay on row " << ticket.getRow() << ", where you have " << ticket.getSeats() << " seats.";
+	cout << endl << "Your will stay on row " << ticket.getRow() << ", on seat " << ticket.getSeat();
 }
-void TotalCost(Ticket ticket)
+void priceInEuro(Ticket& ticket)
 {
-	double sum = 0;
-	if (ticket.getAgeOfPerson1() != 0)
-		sum += ticket.getPrice();
-	if (ticket.getAgeOfPerson2() != 0)
-		sum += ticket.getPrice();
-	if (ticket.getAgeOfPerson3() != 0)
-		sum += ticket.getPrice();
-	if (ticket.getAgeOfPerson4() != 0)
-		sum += ticket.getPrice();
-	if (ticket.getAgeOfPerson5() != 0)
-		sum += ticket.getPrice();
-	if (ticket.getAgeOfPerson6() != 0)
-		sum += ticket.getPrice();
-	cout << "The total cost of the ticket is: " << sum << " lei";
+	float price;
+	price = ticket.getPrice();
+	cout << price / 5.0;
 }
 class Location {
 	int numberOfSeats = 0;
@@ -672,10 +669,10 @@ void isMyEventAvailable(Event event)
 int Ticket::soldTickets = 0;
 int main()
 {
-	//Ticket bilet1(10, 5, 29.8, true, "peluza", 15, 16, 17, 18, 19, 20);
-	/*Ticket ticket;
+
+	Ticket ticket;
 	cin >> ticket;
-	cout << ticket;*/
+	cout << ticket;
 	/*Ticket copy = bilet1;
 	cout<<	copy.getAgeOfPerson2();
 	Ticket bilet2;
@@ -720,10 +717,4 @@ int main()
 	event.setNameOfEvent("Jazz Concert");
 	event.activateEvent();
 	isMyEventAvailable(event);*/
-	
-	int a;
-	a = rand();
-	cout << a;
-	int b = rand();
-	cout << endl << b;
 }
