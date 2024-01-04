@@ -41,9 +41,19 @@ public:
 	{
 		return string(this->name_of_holder);
 	}
-	ZoneType Getzone()
+	string getzone()
 	{
-		return this->zone;
+		
+		switch (this->zone) {
+		case ZoneType::General_access:
+			return "General_Access";
+		case ZoneType::Special_access:
+			return "Special_Access";
+		case ZoneType::VIP:
+			return "VIP";
+		default:
+			return "Cannot enter";
+		}
 	}
 	//setters
 	void setRow(int value)
@@ -671,8 +681,7 @@ int main()
 {
 
 	Ticket ticket;
-	cin >> ticket;
-	cout << ticket;
+	ticket.setZone("AAA");
 	/*Ticket copy = bilet1;
 	cout<<	copy.getAgeOfPerson2();
 	Ticket bilet2;
