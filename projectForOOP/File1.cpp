@@ -7,7 +7,7 @@ private:
 	const int uniqueId = 0;
 	int row = 0;
 	int seat = 0;
-	float price = 0;
+	double price = 0;
 	bool isValid = false;
 	char* name_of_holder = nullptr;
 	ZoneType zone = ZoneType::No_Access;
@@ -41,10 +41,12 @@ public:
 	{
 		return string(this->name_of_holder);
 	}
-	string getzone()
+	string getZone()
 	{
 		
 		switch (this->zone) {
+		case ZoneType::No_Access:
+			return "You cannot enter the event. ";
 		case ZoneType::General_access:
 			return "General_Access";
 		case ZoneType::Special_access:
@@ -52,7 +54,7 @@ public:
 		case ZoneType::VIP:
 			return "VIP";
 		default:
-			return "Cannot enter";
+			return "Wrong value for the zone. ";
 		}
 	}
 	//setters
@@ -92,13 +94,18 @@ public:
 		this->name_of_holder = new char[strlen(value) + 1];
 		strcpy_s(this->name_of_holder, strlen(value) + 1, value);
 	}
-	void setZone(ZoneType variable)
-	{
-		if (variable == ZoneType::General_access || variable == ZoneType::Special_access || variable == ZoneType::VIP)
-			this->zone = variable;
-		else
-			throw exception("The zone is not valid. ");
+	void setZone(const char* variable) {
+			if (strcmp(variable, "General_access") == 0)
+				this->zone = ZoneType::General_access;
+			else if (std::strcmp(variable, "Special_access") == 0)
+				this->zone = ZoneType::Special_access;
+			else if (std::strcmp(variable, "VIP") == 0)
+				this->zone = ZoneType::VIP;
+		else {
+			throw exception("The zone is not valid.");
+		}
 	}
+
 
 	//constructors, copy constr, destructor, overloaded operator=
 	Ticket() :uniqueId(++soldTickets) {
@@ -154,6 +161,7 @@ public:
 	Ticket& operator=(const Ticket& s)
 	{
 		this->row = s.row;
+		this->seat = s.seat;
 		if (s.name_of_holder != NULL) {
 			if (this->name_of_holder != NULL)
 			{
@@ -163,6 +171,7 @@ public:
 			this->name_of_holder = new char[strlen(s.name_of_holder) + 1];
 			strcpy(this->name_of_holder, s.name_of_holder);
 		}
+		this->price = s.price;
 		this->isValid = s.isValid;
 		this->zone = s.zone;
 		return *this;
@@ -199,7 +208,7 @@ public:
 	//cast
 
 
-	operator int() {
+	operator float() {
 		return this->price / 5.0;//convert price from lei to euro.
 	}
 
@@ -210,7 +219,7 @@ public:
 	//opeartor >>(cin)
 
 
-	friend istream& operator>>(istream& console, Ticket& ticket);
+	friend void operator>>(istream& console, Ticket& ticket);
 };
 string zoneToString(ZoneType zone) {
 	switch (zone) {
@@ -229,26 +238,25 @@ string zoneToString(ZoneType zone) {
 //operator <<
 ostream& operator<<(ostream& out, const Ticket& ticket)
 {
-	out << ticket.uniqueId << endl << ticket.row << endl << ticket.seat << endl << ticket.price << endl << ticket.isValid << endl << zoneToString(ticket.zone) << endl;
+	out << ticket.uniqueId << endl << ticket.row << endl << ticket.seat << endl << ticket.price << endl << ticket.isValid << endl << zoneToString(ticket.zone)<<endl<< ticket.name_of_holder << endl;
 	return out;
 }
 
 
 //operator >>
-istream& operator>>(istream& in, Ticket& ticket) {
-	cout << "Enter the row, the seat, the price, the validity, the zone(General_Access = 1, Special_access = 2, or VIP = 3), and your name: ";
-
-	int zoneValue;
-	in >> ticket.row >> ticket.seat >> ticket.price >> ticket.isValid >> zoneValue;
-	ticket.zone = static_cast<ZoneType>(zoneValue);
-
-	in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // Clear newline character from the buffer
-
-	char name[100];
-	in.getline(name, sizeof(name));
-	ticket.setNameOfPerson(name);
-
-	return in;
+void operator>>(istream& console, Ticket& ticket)
+{
+	cout << endl << "Input name of the owner: ";
+	char buffer[2000];
+	console.getline(buffer, 2000);
+	console.clear();
+	ticket.setNameOfPerson(buffer);
+	cout << endl << "Input row, seat, price, validity(if valid, write 1, if not valid, write 0) and zone(For general access, write 1, for special access, write 2, and for VIP, write 3): ";
+	int zone;
+	char price[5];
+	console >> ticket.row >> ticket.seat  >>ticket.price >> ticket.isValid >> zone;
+	ticket.zone = static_cast<ZoneType>(zone);
+	
 }
 
 
@@ -422,7 +430,7 @@ ostream& operator<<(ostream& out, const Location& l)
 //operator >>
 istream& operator>>(istream& in, Location& l) {
 	char name[200];
-	cout << "Enter number of seats, reviews, availability, and name: ";
+	cout << "Enter number of seats, reviews, availability, and name ";
 	in >> l.numberOfSeats;
 	for (int i = 0; i < 5; i++)
 		in >> l.reviews[i];
@@ -681,7 +689,12 @@ int main()
 {
 
 	Ticket ticket;
-	ticket.setZone("AAA");
+	cin >> ticket;
+	cout << ticket;
+}
+
+
+	
 	/*Ticket copy = bilet1;
 	cout<<	copy.getAgeOfPerson2();
 	Ticket bilet2;
@@ -726,4 +739,4 @@ int main()
 	event.setNameOfEvent("Jazz Concert");
 	event.activateEvent();
 	isMyEventAvailable(event);*/
-}
+
