@@ -188,7 +188,7 @@ public:
 	}
 
 
-	int operator[](int i)
+	char operator[](int i)
 	{
 		if (i > 0 && i <= strlen(this->name_of_holder))
 			return this->name_of_holder[i];
@@ -209,7 +209,7 @@ public:
 
 
 	operator double() {
-		return this->price / 5.0;//convert price from lei to euro.
+		return this->price;
 	}
 
 
@@ -688,10 +688,13 @@ int Ticket::soldTickets = 0;
 int main()
 {
 
-	Ticket ticket;
-	cin >> ticket;
-	cout << ticket;
-}
+	Ticket ticket(1, 2, 22.56, false, "Nitu Andrei", static_cast<ZoneType>(1));
+	cout<<ticket[1];
+	float price;
+	price = ticket;
+	cout << endl<<price;
+	cout << !ticket;
+}	
 
 
 	
