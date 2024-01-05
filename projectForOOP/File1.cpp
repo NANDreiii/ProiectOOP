@@ -220,6 +220,22 @@ public:
 
 
 	friend void operator>>(istream& console, Ticket& ticket);
+
+	//other methods for ticket.
+	void printLocationOfTicket(Ticket& ticket)
+	{
+		cout << endl << "Your will stay on row " << ticket.getRow() << ", on seat " << ticket.getSeat();
+	}
+	void priceInEuro(Ticket& ticket)
+	{
+		float price;
+		price = ticket.getPrice();
+		cout << price / 5.0;
+	}
+	static void printSeat(Ticket ticket)
+	{
+		cout << endl << "The ticket is on seat: " << ticket.getSeat() << ", on row: " << ticket.getRow();
+	}
 };
 string zoneToString(ZoneType zone) {
 	switch (zone) {
@@ -253,24 +269,12 @@ void operator>>(istream& console, Ticket& ticket)
 	ticket.setNameOfPerson(buffer);
 	cout << endl << "Input row, seat, price, validity(if valid, write 1, if not valid, write 0) and zone(For general access, write 1, for special access, write 2, and for VIP, write 3): ";
 	int zone;
-	char price[5];
 	console >> ticket.row >> ticket.seat  >>ticket.price >> ticket.isValid >> zone;
 	ticket.zone = static_cast<ZoneType>(zone);
 	
 }
 
 
-//other methods for ticket.
-void printLocationOfTicket(Ticket& ticket)
-{
-	cout << endl << "Your will stay on row " << ticket.getRow() << ", on seat " << ticket.getSeat();
-}
-void priceInEuro(Ticket& ticket)
-{
-	float price;
-	price = ticket.getPrice();
-	cout << price / 5.0;
-}
 class Location {
 	int numberOfSeats = 0;
 	int reviews[5] = {-1, -1, -1, -1, -1};
@@ -291,26 +295,11 @@ public:
 	{
 		return string(this->nameOfLocation);
 	}
-	int getReviewNumber1()
+	int getReview(int i)
 	{
-		return this->reviews[0];
+		return this->reviews[i];
 	}
-	int getReviewNumber2()
-	{
-		return this->reviews[1];
-	}
-	int getReviewNumber3()
-	{
-		return this->reviews[2];
-	}
-	int getReviewNumber4()
-	{
-		return this->reviews[3];
-	}
-	int getReviewNumber5()
-	{
-		return this->reviews[4];
-	}
+	
 	//setters
 	void setNumberOfSeats(int value)
 	{
@@ -413,9 +402,35 @@ public:
 		copie.isAvailable = !copie.isAvailable;
 		return copie;
 	}
+
+	//operator << (cout)
 	friend ostream& operator<<(ostream& console, const Location& l);
 	//opeartor >>(cin)
-	friend istream& operator>>(istream& console, Location& l);
+
+
+	friend void operator>>(istream& console, Location& l);
+
+
+	//other methods for Location
+	static void totalNumberOfSeats(Location location)
+	{
+		cout << "the location has a maximum number of: " << location.getNumberOfSeats() << " seats";
+	}
+	static void averageReview(Location location)
+	{
+		int i = 0;
+		float avg = 0;
+		for (i = 0; i < 5; i++)
+			avg = avg + location.getReview(i);
+		if (i >= 1)
+		{
+			avg = avg / 5;
+			cout << "The average rating for this location is: " << avg << " stars. ";
+		}
+		else
+			cout << "The location has no ratings. ";
+
+	}
 
 };	
 //operator <<
@@ -423,71 +438,25 @@ ostream& operator<<(ostream& out, const Location& l)
 {
 	out << l.numberOfSeats << endl << l.nameOfLocation << endl << l.isAvailable;
 	for (int i = 0; i < 5; i++)
-		out << l.reviews[i];
+		out <<' '<< l.reviews[i];
 
 	return out;
 }
 //operator >>
-istream& operator>>(istream& in, Location& l) {
+void operator>>(istream& in, Location& l) {
 	char name[200];
-	cout << "Enter number of seats, reviews, availability, and name ";
+	cout << "Enter name of location, number of seats, reviews, availability(true or false): ";
+	in.getline(name, 2000);
+	in.clear();
+	l.setNameOfLocation(name);
 	in >> l.numberOfSeats;
 	for (int i = 0; i < 5; i++)
 		in >> l.reviews[i];
-	in >> l.isAvailable >> name;
-	if (name != NULL)
-	{
-		if (l.nameOfLocation != NULL)
-			delete[] l.nameOfLocation;
-		l.nameOfLocation = new char[strlen(name) + 1];
-		strcpy(l.nameOfLocation, name);
-	}
-	return in;
-}
-//other methods for Location
-void totalNumberOfSeats(Location location)
-{
-	cout << "the location has a maximum number of: " << location.getNumberOfSeats() << " seats";
-}
-void averageReview(Location location)
-{
-	int i = 0;
-	double avg = 0;
-	if (location.getReviewNumber1() > -1)
-	{
-		i++;
-		avg += location.getReviewNumber1();
-	}
-	if (location.getReviewNumber2() > -1)
-	{
-		i++;
-		avg += location.getReviewNumber2();
-	}
-	if (location.getReviewNumber3() > -1)
-	{
-		i++;
-		avg += location.getReviewNumber3();
-	}
-	if (location.getReviewNumber4() > -1)
-	{
-		i++;
-		avg += location.getReviewNumber4();
-	}
-	if (location.getReviewNumber5() > -1)
-	{
-		i++;
-		avg += location.getReviewNumber5();
-	}
-	cout << i << endl << avg << endl;
-	if (i >= 1)
-	{
-		avg =avg / i;
-		cout << "The average rating for this location is: " << avg << " stars. ";
-	}
-	else
-		cout << "The location has no ratings. ";
+	in >> l.isAvailable;
 
 }
+
+
 class Event {
 private:
 	int eventId = 0;
@@ -688,35 +657,37 @@ int Ticket::soldTickets = 0;
 int main()
 {
 
-	Ticket ticket(1, 2, 22.56, false, "Nitu Andrei", static_cast<ZoneType>(1));
+	/*Ticket ticket(1, 2, 22.56, false, "Nitu Andrei", static_cast<ZoneType>(1));
 	cout<<ticket[1];
 	float price;
 	price = ticket;
 	cout << endl<<price;
 	cout << !ticket;
-}	
-
-
+	ticket.priceInEuro(ticket);
+	cout << endl;
+	Ticket::printSeat(ticket);*/
+	//int reviews[5] = { 3, 5, 5, 2, 1 };
+	//Location location(2000, reviews, true, "Andrei");
+	//cout<<location.getReview(3);
+	//Location location1 = location;
+	//Location location2;
+	//location2 = location;
+	//cout << endl << location.getReview(1) << endl << location1.getReview(1) << endl << location2.getReview(1);
+	//cout<<location.availability();
+	//Location::averageReview(location);
+	int review[] = { 1,2,3,4,5 };
+	Location location;
+	cin >> location;
+	cout << location;
 	
-	/*Ticket copy = bilet1;
-	cout<<	copy.getAgeOfPerson2();
-	Ticket bilet2;
-	cout << endl;
-	bilet2 = bilet1;
-	cout<<bilet2.getAgeOfPerson2();*/
-	/*bilet1.setRow(10);
-	bilet1.setNumberOfSeats(4);
-	bilet1.setPrice(20);
-	bilet1.setAgeOfPerson(0, 15);
-	bilet1.setAgeOfPerson(1, 20);
-	bilet1.setAgeOfPerson(2, 30);
-	TotalCost(bilet1);
-	printLocationOfTicket(bilet1);
-	cout << endl;
+	/*cin >> location;
+	cout << endl << location.getNumberOfSeats() << ' ' << location.getNameOfLocation() << endl;
+	for (int i = 0; i < 5; i++)
+		cout << ' ' << location.getReview(i);
+	cout << endl << location.availability();*/
 
 
-
-	Location locatie;
+	/*Location locatie;
 	locatie.setNumberOfSeats(15000);
 	locatie.setReview(0, 5);
 	locatie.setReview(1, 5);
@@ -743,3 +714,4 @@ int main()
 	event.activateEvent();
 	isMyEventAvailable(event);*/
 
+}
