@@ -228,8 +228,8 @@ public:
 	}
 	void priceInEuro(Ticket& ticket)
 	{
-		float price;
-		price = ticket.getPrice();
+		double price;
+		price= ticket.getPrice();
 		cout << price / 5.0;
 	}
 	static void printSeat(Ticket ticket)
@@ -460,9 +460,8 @@ void operator>>(istream& in, Location& l) {
 class Event {
 private:
 	int eventId = 0;
-	char* nameOfEvent = nullptr;
-	bool isCanceled = false;
-	int maximumAttendancePerDay[7] = { 0 };
+	int day = 0;
+	int* maximumAttendancePerDay = nullptr;
 public:
 	static const int MAX_CAPACITY = 150000;
 	//getters
@@ -470,42 +469,19 @@ public:
 	{
 		return this->eventId;
 	}
-	string getNameOfEvent()
-	{
-		return string(this->nameOfEvent);
+	int getDay()
+{
+	return this->day;
 	}
-	bool getAvailableness()
+	int* getAttendance()
 	{
-		return this->isCanceled;
+		int* copy = new int[this->day];
+		for (int i = 0; i < this->day; i++)
+			copy[i] = this->maximumAttendancePerDay[i];
+		return copy;
 	}
-	int getAttendanceDay1()
-	{
-		return this->maximumAttendancePerDay[0];
-	}
-	int getAttendanceDay2()
-	{
-		return this->maximumAttendancePerDay[1];
-	}
-	int getAttendanceDay3()
-	{
-		return this->maximumAttendancePerDay[2];
-	}
-	int getAttendanceDay4()
-	{
-		return this->maximumAttendancePerDay[3];
-	}
-	int getAttendanceDay5()
-	{
-		return this->maximumAttendancePerDay[4];
-	}
-	int getAttendanceDay6()
-	{
-		return this->maximumAttendancePerDay[5];
-	}
-	int getAttendanceDay7()
-	{
-		return this->maximumAttendancePerDay[6];
-	}
+
+
 	//setters
 	void setIdOfEvent(int value)
 	{
@@ -514,84 +490,59 @@ public:
 		else
 			throw exception("The value of the ID is not right. ");
 	}
-	void setNameOfEvent(const char* name)
+	void setDay(int day)
 	{
-		if (this->nameOfEvent != NULL)
-			delete[] this->nameOfEvent;
-		this->nameOfEvent = new char[strlen(name) + 1];
-		strcpy_s(this->nameOfEvent, strlen(name) + 1, name);
-
-	}
-	void cancelEvent()
-	{
-		this->isCanceled = true;
-	}
-	void activateEvent()
-	{
-		this->isCanceled = false;
-	}
-	void setMaxAttendanceEveryDay(int index, int number)
-	{
-		if (index >= 0 && index <= 6 && number >= 1 && number <= MAX_CAPACITY)
-			this->maximumAttendancePerDay[index] = number;
+		if (day >= 0 && day <= 6)
+			this->day = day;
 		else
-			throw exception("One of the values is wrong. ");
+			throw exception("The day is not right. ");
+	}
+	void setMaxAttendanceEveryDay(int* newAttendance, int newDay)
+	{
+		delete[] this->maximumAttendancePerDay;
+		this->maximumAttendancePerDay = new int[newDay];
+		memcpy(this->maximumAttendancePerDay, newAttendance , sizeof(int) * newDay);
+		this->day = newDay;
 	}
 	//constr, copy constr, operator=, deconstr
-	Event() {
+	Event():maximumAttendancePerDay(nullptr) {
 
 	}
-	Event(int Id, int attendance[7], bool cancel, const char* name)
+	Event(int Id, int day, int *att)
 	{
-		this->eventId = Id;
-		this->isCanceled = cancel;
-		this->nameOfEvent = new char[strlen(name) + 1];
-		strcpy(this->nameOfEvent, name);
-		for (int i = 0; i < 7; i++)
-			this->maximumAttendancePerDay[i] = attendance[i];
-
+		setIdOfEvent(Id);
+		setDay(day);
+		setMaxAttendanceEveryDay(att, day);
 
 	}
-	Event(int nr, bool is)
+	Event(int nr)
 	{
 		this->eventId = nr;
-		this->isCanceled = is;
+		
 	}
 
-	~Event() {
-		cout << endl << "Deconstructor for Event class. ";
-		delete[] this->nameOfEvent;
-
-	}
 	Event(const Event& e) {
 
 		this->eventId = e.eventId;
-		this->isCanceled = e.isCanceled;
-		if (e.nameOfEvent!= NULL) {
-			this->nameOfEvent = new char[strlen(e.nameOfEvent) + 1];
-			strcpy(this->nameOfEvent, e.nameOfEvent);
-		}
-		for (int i = 0; i < 7; i++)
-			this->maximumAttendancePerDay[i] = e.maximumAttendancePerDay[i];
+		this->day = day;
+		for (int i = 0; i < this->day; i++)
+			this->setMaxAttendanceEveryDay(e.maximumAttendancePerDay, i);
+		
 
 	}
 	Event& operator=(const Event& s)
 	{
 		this->eventId = s.eventId;
-		if (s.nameOfEvent != NULL) {
-			if (this->nameOfEvent!= NULL)
-			{
-				delete[] this->nameOfEvent;
-				this->nameOfEvent = nullptr;
-			}
-			this->nameOfEvent= new char[strlen(s.nameOfEvent) + 1];
-			strcpy(this->nameOfEvent, s.nameOfEvent);
-		}
-		this->isCanceled= s.isCanceled;
-		for (int i = 0; i < 7; i++)
-			this->maximumAttendancePerDay[i] = s.maximumAttendancePerDay[i];
+		this->day = day;
+		for (int i = 0; i < this->day; i++)
+			this->setMaxAttendanceEveryDay(s.maximumAttendancePerDay, i);
 		return *this;
 
+	}
+	~Event()
+	{
+		cout<<"Deconstructor for Event";
+		delete[] this->maximumAttendancePerDay;
 	}
 	//operatori
 	void operator++()
@@ -605,54 +556,40 @@ public:
 		else
 			cout << "Wrong index. ";
 	}
-	Event operator!() {
-		Event copie = *this;
-		copie.isCanceled = !copie.isCanceled;
-		return copie;
-	}
+
 	friend ostream& operator<<(ostream& console, const Event& e);
 	//opeartor >>(cin)
-	friend istream& operator>>(istream& console, Event& e);
+	friend void operator>>(istream& console, Event& e);
 
 };
 //operator <<
 ostream& operator<<(ostream& out, const Event& e)
 {
-	out << e.eventId << endl << e.nameOfEvent << endl << e.isCanceled;
-	for (int i = 0; i < 7; i++)
-		out << e.maximumAttendancePerDay[i];
+	out << e.eventId << endl << e.day;
+	int* attendanceArray = e.maximumAttendancePerDay;
+	for (int i = 0; i < e.day; ++i) {
+		cout << attendanceArray[i] << " ";
+	}
 	return out;
 }
 //operator >>
-istream& operator>>(istream& in, Event& e) {
-	char name[200];
-	cout << "Enter eventId, name, availability and max attendance per day: ";
-	in >> e.eventId >> name >> e.isCanceled;
-	for (int i = 0; i < 7; i++)
-		in >> e.maximumAttendancePerDay[i];
-	if (name != NULL)
-	{
-		if (e.nameOfEvent != NULL)
-			delete[] e.nameOfEvent;
-		e.nameOfEvent = new char[strlen(name) + 1];
-		strcpy(e.nameOfEvent, name);
+void operator>>(istream& in, Event& e) {
+	cout << "Enter eventId,number of days, and max attendance per day: ";
+	in >> e.eventId >> e.day;
+	delete[] e.maximumAttendancePerDay;
+	if (e.day > 0) {
+		e.maximumAttendancePerDay = new int[e.day];
+		for (int i = 0; i < e.day; ++i) {
+			in >> e.maximumAttendancePerDay[i];
+		}
 	}
-	return in;
+	else {
+		e.maximumAttendancePerDay = nullptr;
+	}
+
 }
 //other methods for event
-void TotalAttendance(Event event)
-{
-	int total = 0;
-	total = total + event.getAttendanceDay1() + event.getAttendanceDay2() + event.getAttendanceDay3() + event.getAttendanceDay4() + event.getAttendanceDay5() + event.getAttendanceDay6() + event.getAttendanceDay7();
-	cout << "In total, there can be a maximum of " << total << " people attending this event in a week. ";
-}
-void isMyEventAvailable(Event event)
-{	
-	if (event.getAvailableness() == true)
-		cout << "Unfortunately, the event " << event.getNameOfEvent() << " is not available anymore. ";
-	else
-		cout << "Good news! The event " << event.getNameOfEvent() << " is still available. ";
-}
+
 int Ticket::soldTickets = 0;
 int main()
 {
@@ -675,10 +612,10 @@ int main()
 	//cout << endl << location.getReview(1) << endl << location1.getReview(1) << endl << location2.getReview(1);
 	//cout<<location.availability();
 	//Location::averageReview(location);
-	int review[] = { 1,2,3,4,5 };
+	/*int review[] = { 1,2,3,4,5 };
 	Location location;
 	cin >> location;
-	cout << location;
+	cout << location;*/
 	
 	/*cin >> location;
 	cout << endl << location.getNumberOfSeats() << ' ' << location.getNameOfLocation() << endl;
@@ -686,32 +623,15 @@ int main()
 		cout << ' ' << location.getReview(i);
 	cout << endl << location.availability();*/
 
-
-	/*Location locatie;
-	locatie.setNumberOfSeats(15000);
-	locatie.setReview(0, 5);
-	locatie.setReview(1, 5);
-	locatie.setReview(2, 1);
-	locatie.setReview(3, 3);
-	locatie.setReview(4, 4);
-	averageReview(locatie);
-	cout << endl;
-	totalNumberOfSeats(locatie);
-	cout << endl;
-
-
-	Event event;
-	event.setMaxAttendanceEveryDay(0, 10000);
-	event.setMaxAttendanceEveryDay(1, 10000);
-	event.setMaxAttendanceEveryDay(2, 10000);
-	event.setMaxAttendanceEveryDay(3, 10000);
-	event.setMaxAttendanceEveryDay(4, 10000);
-	event.setMaxAttendanceEveryDay(5, 10000);
-	event.setMaxAttendanceEveryDay(6, 10000);
-	TotalAttendance(event);
-	cout << endl;
-	event.setNameOfEvent("Jazz Concert");
-	event.activateEvent();
-	isMyEventAvailable(event);*/
-
+	int daily[3] = {2000, 30000, 40000};
+	Event event(20, 3, daily);
+	cout << event.getDay();
+	int* attendanceArray = event.getAttendance();
+	for (int i = 0; i < event.getDay(); ++i) {
+		cout << attendanceArray[i] << " ";
+	}
+	Event event1;
+	cin >> event1;
+	cout << event1;
 }
+	
