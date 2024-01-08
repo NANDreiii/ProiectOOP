@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
+#include<vector>
 using namespace std;
 enum class ZoneType{No_Access = 0,General_access = 1, Special_access = 2, VIP = 3 };
 
@@ -596,6 +597,31 @@ void operator>>(istream& in, Event& e) {
 	}
 
 }
+class derivedEvent : public Event{
+private: 
+	vector<int> attendance;
+public:
+	derivedEvent() :Event()
+	{
+
+	}
+	derivedEvent(int Id, int day, int* att) : Event(Id, day, att), attendance(att, att + day) {
+		
+	}
+
+	// Method to print attendance of the first day using the vector -> STL class
+	void printAttFirstDay()
+	{
+		if (!attendance.empty())
+		{
+			cout << "Attendance in the first day is: " << attendance[0] << endl;
+
+		}
+		else
+			cout << "No data available";
+	}
+
+};
 class VisualizableTicket : protected Ticket, public Visualizable { // created by deriving existing class Ticket + abstract class Visualizable
 public:
 	// Default constructor
