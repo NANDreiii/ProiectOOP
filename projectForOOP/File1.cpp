@@ -2,8 +2,16 @@
 #include<iostream>
 using namespace std;
 enum class ZoneType{No_Access = 0,General_access = 1, Special_access = 2, VIP = 3 };
+
+class Visualizable { //Abstract class
+public:
+	virtual void visualize() const = 0;  // Pure virtual method
+	virtual void showSeatInfo() const = 0;  // Pure virtual method
+	virtual ~Visualizable() {
+	}
+};
 class Ticket {
-private:
+protected:
 	const int uniqueId = 0;
 	int row = 0;
 	int seat = 0;
@@ -588,7 +596,34 @@ void operator>>(istream& in, Event& e) {
 	}
 
 }
-//other methods for event
+class VisualizableTicket : protected Ticket, public Visualizable { // created by deriving existing class Ticket + abstract class Visualizable
+public:
+	// Default constructor
+	VisualizableTicket() : Ticket() {
+		
+	}
+
+	
+	void visualize() const override {
+		
+		cout << "Ticket Visualization:\n";
+		cout << "-----------------------\n";
+		cout << "ID: " << uniqueId<< endl;
+		cout << "Row: " << row << endl;
+		cout << "Seat: " << seat<< endl;
+		cout << "Price: $" << price<< endl;
+		cout << "Validity: " << (isValid ? "Valid" : "Invalid") << endl;
+		cout << "Holder's Name: " << name_of_holder<<endl;
+		cout << "Zone: " << static_cast<int>(zone)<< endl;
+		
+	}
+	void showSeatInfo() const override {
+		cout << "You will stay on seat: " << seat << ", which is located on row: " << row;
+	}
+	~VisualizableTicket() {
+
+	}
+};
 
 int Ticket::soldTickets = 0;
 int main()
