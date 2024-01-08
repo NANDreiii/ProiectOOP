@@ -25,6 +25,18 @@ public:
 	static const int MAX_PRICE = 10000;
 	static const int MAX_ROW = 100;
 	static const int MAX_SEAT = 100;
+	//virtual methods
+	virtual void printIdAndValidity()
+	{
+		cout << "Ticket details:" << endl << uniqueId << endl << isValid;
+
+	}
+	virtual void printRowSeatPrice()
+	{
+		cout << "row is: " << row << endl;
+		cout << "seat is: " << seat << endl;
+		cout << "Price is: " << price << endl;
+	}
 	//getters
 	int getUniqueId()
 	{
@@ -285,12 +297,25 @@ void operator>>(istream& console, Ticket& ticket)
 
 
 class Location {
+protected:
 	int numberOfSeats = 0;
 	int reviews[5] = {-1, -1, -1, -1, -1};
 	bool isAvailable = true;
 	char* nameOfLocation = nullptr;
 public:
 	static const int MAX_SEATS = 150000;
+	//virtual methods
+	virtual void printInfo()
+	{
+		cout << "Number of seats is: " << numberOfSeats;
+	}
+	virtual void simpleFunction()
+	{
+		if (isAvailable == true)
+			cout << "The location " << nameOfLocation << " is available";
+		else
+			cout << "The location " << nameOfLocation << " is not available";
+	}
 	//getters
 	int getNumberOfSeats()
 	{
@@ -597,6 +622,38 @@ void operator>>(istream& in, Event& e) {
 	}
 
 }
+class DerivedTicket : public Ticket {
+public:
+
+	void printIdAndValidity() override
+	{
+		cout << "Ticket details:" << endl << isValid << endl << uniqueId; // changed order of printing.
+
+	}
+	void printRowSeatPrice() override
+	{
+		cout << "The price is: " << price << endl;
+		cout << "The row row is: " << row << endl;
+		cout << "The seat is: " << seat << endl;
+		if (price > 1000)
+			cout << "The ticket is expensive"; // changed order of printing and added another string to print.
+
+	}
+};
+class DerivedLocation : protected Location {
+	void printInfo() override
+	{
+		cout << "FIrst review of the location is: " << reviews;
+	}
+	 void simpleFunction() override
+	{
+		 cout << "The location has " << numberOfSeats << " seats in total";
+		 if (isAvailable == true)
+			cout << "The location " << nameOfLocation << " is available";
+		else
+			cout << "The location " << nameOfLocation << " is not available";
+	}
+};
 class derivedEvent : public Event{
 private: 
 	vector<int> attendance;
