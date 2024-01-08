@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
+#include<fstream>
 #include<vector>
 using namespace std;
 enum class ZoneType{No_Access = 0,General_access = 1, Special_access = 2, VIP = 3 };
@@ -126,8 +127,51 @@ public:
 			throw exception("The zone is not valid.");
 		}
 	}
+	//methods for files
+	void saveData(ofstream& file) 
+	{
+
+		if (!file.is_open()) {
+			throw exception("file is not opened");
+		}
+		else
+		{
+
+			file.write(reinterpret_cast<const char*>(this->uniqueId), sizeof(int));
 
 
+			int nameSize = strlen(this->name_of_holder) + 1;
+			file.write(reinterpret_cast<const char*>(&nameSize), sizeof(int));
+
+
+			file.write(this->name_of_holder, sizeof(char) * nameSize);
+
+
+			file.write(reinterpret_cast<const char*>(this->isValid), sizeof(int));
+
+
+			file.write(reinterpret_cast<const char*>(this->row), sizeof(int));
+
+			file.close();
+		}
+		
+	}
+	//deserializing objects
+	void readData(ifstream& file) {
+		if (!file.is_open()) {
+			throw exception("File is not opened.");
+		}
+
+		file.read((char*)&this->uniqueId, sizeof(int));
+		int nameSize;
+		file.read((char*)(&this->name_of_holder), sizeof(int));
+		delete[]this->name_of_holder;
+		this->name_of_holder = new char[sizeof(this->name_of_holder)];
+		file.read((char*)this->name_of_holder, sizeof(char) * sizeof(this->name_of_holder));
+		file.read((char*)(&this->row), sizeof(int));
+		file.read((char*)(&this->seat), sizeof(int));
+		file.read((char*)&this->isValid, sizeof(bool));
+	}
 	//constructors, copy constr, destructor, overloaded operator=
 	Ticket() :uniqueId(++soldTickets) {
 
